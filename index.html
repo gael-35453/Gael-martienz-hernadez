@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distribuciones de Frecuencia</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --border: #2a2a30;
+    --accent: #e8c547;
+    --accent2: #5ce1c8;
+    --accent3: #f07560;
+    --text: #e8e6e1;
+    --muted: #6b6b78;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 3rem 2rem;
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 4rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .example {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 5rem;
+    overflow: hidden;
+  }
+
+  .example-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .example-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+  }
+
+  .badge-1 { background: rgba(232,197,71,0.15); color: var(--accent); border: 1px solid rgba(232,197,71,0.3); }
+  .badge-2 { background: rgba(92,225,200,0.15); color: var(--accent2); border: 1px solid rgba(92,225,200,0.3); }
+  .badge-3 { background: rgba(240,117,96,0.15); color: var(--accent3); border: 1px solid rgba(240,117,96,0.3); }
+
+  .example-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+  }
+
+  .example-body { padding: 2rem; }
+
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    margin-top: 2rem;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+
+  th {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid rgba(42,42,48,0.6);
+    font-variant-numeric: tabular-nums;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .chart-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.25rem;
+  }
+
+  .chart-title {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .chart-wrap { position: relative; height: 250px; }
+
+  .accent1-text { color: var(--accent); }
+  .accent2-text { color: var(--accent2); }
+  .accent3-text { color: var(--accent3); }
+</style>
+</head>
+<body>
+
+<h1>Distribuciones de Frecuencia</h1>
+<p class="subtitle">100 datos de entrada · 3 ejemplos estadísticos</p>
+
+<!-- ==================== EJEMPLO 1 ==================== -->
+<div class="example">
+  <div class="example-header">
+    <span class="example-badge badge-1">Ejemplo 01</span>
+    <span class="example-title">Datos Cuantitativos Discretos</span>
+  </div>
+  <div class="example-body">
+    <p class="section-label">Tabla de frecuencias</p>
+    <table id="table1"></table>
+
+    <p class="section-label">Gráficas</p>
+    <div class="charts-grid">
+      <div class="chart-card"><div class="chart-title">Histograma — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1hist"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Polígono de Frecuencias — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1poly"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Diagrama de Barras — Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e1bar"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Ojiva — Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e1ogive"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Diagrama de Pastel — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1pie"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== EJEMPLO 2 ==================== -->
+<div class="example">
+  <div class="example-header">
+    <span class="example-badge badge-2">Ejemplo 02</span>
+    <span class="example-title">Datos Cuantitativos Continuos</span>
+  </div>
+  <div class="example-body">
+    <p class="section-label">Tabla de frecuencias</p>
+    <table id="table2"></table>
+
+    <p class="section-label">Gráficas</p>
+    <div class="charts-grid">
+      <div class="chart-card"><div class="chart-title">Histograma — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2hist"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Polígono de Frecuencias — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2poly"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Diagrama de Barras — Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e2bar"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Ojiva — Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e2ogive"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Diagrama de Pastel — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2pie"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== EJEMPLO 3 ==================== -->
+<div class="example">
+  <div class="example-header">
+    <span class="example-badge badge-3">Ejemplo 03</span>
+    <span class="example-title">Datos Cualitativos</span>
+  </div>
+  <div class="example-body">
+    <p class="section-label">Tabla de frecuencias</p>
+    <table id="table3"></table>
+
+    <p class="section-label">Gráficas</p>
+    <div class="charts-grid">
+      <div class="chart-card"><div class="chart-title">Histograma — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3hist"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Polígono de Frecuencias — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3poly"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Diagrama de Barras — Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e3bar"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Ojiva — Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e3ogive"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Diagrama de Pastel — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3pie"></canvas></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLORS = ['#e8c547','#5ce1c8','#f07560','#a78bfa','#60a5fa','#34d399','#fb923c','#f472b6'];
+
+const chartDefaults = {
+  color: '#e8e6e1',
+  borderColor: '#2a2a30',
+  plugins: { legend: { labels: { color: '#6b6b78', font: { family: 'DM Mono', size: 11 } } } },
+  scales: {
+    x: { ticks: { color: '#6b6b78', font: { family: 'DM Mono', size: 10 } }, grid: { color: '#1e1e24' }, border: { color: '#2a2a30' } },
+    y: { ticks: { color: '#6b6b78', font: { family: 'DM Mono', size: 10 } }, grid: { color: '#1e1e24' }, border: { color: '#2a2a30' } }
+  }
+};
+
+function mergeDeep(target, source) {
+  const out = Object.assign({}, target);
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      out[key] = mergeDeep(target[key] || {}, source[key]);
+    } else {
+      out[key] = source[key];
+    }
+  }
+  return out;
+}
+
+function makeChart(id, type, labels, datasets, extraOpts) {
+  const ctx = document.getElementById(id).getContext('2d');
+  const opts = mergeDeep(chartDefaults, extraOpts || {});
+  return new Chart(ctx, { type, data: { labels, datasets }, options: { responsive: true, maintainAspectRatio: false, ...opts } });
+}
+
+function buildTable(id, headers, rows) {
+  const table = document.getElementById(id);
+  const thead = document.createElement('thead');
+  const hrow = document.createElement('tr');
+  headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; hrow.appendChild(th); });
+  thead.appendChild(hrow);
+  table.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    r.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+}
+
+// ===================== EJEMPLO 1: Discretos =====================
+(function() {
+  const raw = [2,3,3,4,4,4,5,5,5,5,1,2,2,3,3,3,4,4,4,5,
+               1,1,2,2,3,4,4,5,5,6,6,6,5,4,3,2,1,1,2,3,
+               3,4,4,4,5,5,5,6,6,7,7,7,6,5,4,3,2,1,1,2,
+               2,3,3,4,5,6,7,8,8,7,6,5,4,3,2,1,1,2,3,4,
+               4,5,5,6,6,7,7,8,8,9,9,8,7,6,5,4,3,2,1,1];
+  const n = raw.length;
+  const counts = {};
+  raw.forEach(v => counts[v] = (counts[v]||0)+1);
+  const classes = Object.keys(counts).map(Number).sort((a,b)=>a-b);
+  let cumAbs = 0, cumRel = 0;
+  const rows = classes.map(c => {
+    const fa = counts[c];
+    const fr = +(fa/n).toFixed(4);
+    cumAbs += fa; cumRel = +cumRel.toFixed(4); cumRel += fr;
+    return [c, fa, +fr.toFixed(4), +cumRel.toFixed(4)];
+  });
+  buildTable('table1',
+    ['Clase','Frecuencia Absoluta','Frecuencia Relativa','Frecuencia Acumulada'],
+    rows.map(r => [r[0], r[1], r[2].toFixed(4), r[3].toFixed(4)])
+  );
+  const labels = classes.map(String);
+  const fa = rows.map(r=>r[1]);
+  const fr = rows.map(r=>r[2]);
+  const fc = rows.map(r=>r[3]);
+  makeChart('e1hist','bar',labels,[{label:'Fr. Relativa',data:fr,backgroundColor:'rgba(232,197,71,0.7)',borderColor:'#e8c547',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
+  makeChart('e1poly','line',labels,[{label:'Fr. Relativa',data:fr,borderColor:'#e8c547',backgroundColor:'rgba(232,197,71,0.1)',tension:0.3,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
+  makeChart('e1bar','bar',labels,[{label:'Fr. Absoluta',data:fa,backgroundColor:'rgba(232,197,71,0.6)',borderColor:'#e8c547',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Absoluta',color:'#6b6b78'}}}});
+  makeChart('e1ogive','line',labels,[{label:'Fr. Acumulada',data:fc,borderColor:'#e8c547',backgroundColor:'rgba(232,197,71,0.08)',tension:0.1,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Acumulada',color:'#6b6b78'},max:1}}});
+  makeChart('e1pie','pie',labels,[{data:fr,backgroundColor:COLORS.slice(0,classes.length),borderColor:'#16161a',borderWidth:2}],{scales:{},plugins:{legend:{labels:{color:'#6b6b78',font:{family:'DM Mono',size:11}}}}});
+})();
+
+// ===================== EJEMPLO 2: Continuos =====================
+(function() {
+  const raw = [15.2,18.7,22.1,25.4,28.9,31.2,34.7,38.1,41.5,44.8,
+               16.3,19.4,23.2,26.5,29.6,32.3,35.8,39.2,42.6,45.9,
+               17.1,20.5,24.3,27.6,30.7,33.4,36.9,40.3,43.7,47.0,
+               14.8,18.1,21.4,24.7,28.0,31.3,34.6,37.9,41.2,44.5,
+               16.9,20.2,23.5,26.8,30.1,33.4,36.7,40.0,43.3,46.6,
+               15.5,19.8,22.8,26.1,29.4,32.7,36.0,39.3,42.6,45.9,
+               17.8,21.1,24.4,27.7,31.0,34.3,37.6,40.9,44.2,47.5,
+               14.2,17.5,20.8,24.1,27.4,30.7,34.0,37.3,40.6,43.9,
+               16.6,19.9,23.2,26.5,29.8,33.1,36.4,39.7,43.0,46.3,
+               15.9,19.2,22.5,25.8,29.1,32.4,35.7,39.0,42.3,45.6];
+  const n = raw.length;
+  const min = Math.min(...raw), max = Math.max(...raw);
+  const k = 7;
+  const w = +((max - min) / k).toFixed(2);
+  const intervals = Array.from({length:k},(_,i)=>({li: +(min+i*w).toFixed(2), ls: +(min+(i+1)*w).toFixed(2)}));
+  intervals[k-1].ls = max + 0.01;
+  let cumAbs=0, cumRel=0;
+  const rows = intervals.map(iv => {
+    const fa = raw.filter(v => v >= iv.li && v < iv.ls).length;
+    const mc = +((iv.li+iv.ls)/2).toFixed(2);
+    const fr = +(fa/n).toFixed(4);
+    cumAbs += fa; cumRel = +(cumRel+fr).toFixed(4);
+    return [iv.li.toFixed(2), +(iv.ls-0.01).toFixed(2), mc, fa, fr.toFixed(4), cumRel.toFixed(4)];
+  });
+  buildTable('table2',
+    ['Lím. Inferior','Lím. Superior','Marca de Clase','Fr. Absoluta','Fr. Relativa','Fr. Acumulada'],
+    rows
+  );
+  const labels = rows.map(r=>`[${r[0]}, ${r[1]}]`);
+  const fa = rows.map(r=>+r[3]);
+  const fr = rows.map(r=>+r[4]);
+  const fc = rows.map(r=>+r[5]);
+  makeChart('e2hist','bar',labels,[{label:'Fr. Relativa',data:fr,backgroundColor:'rgba(92,225,200,0.7)',borderColor:'#5ce1c8',borderWidth:1,borderSkipped:false}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
+  makeChart('e2poly','line',labels,[{label:'Fr. Relativa',data:fr,borderColor:'#5ce1c8',backgroundColor:'rgba(92,225,200,0.1)',tension:0.3,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
+  makeChart('e2bar','bar',labels,[{label:'Fr. Absoluta',data:fa,backgroundColor:'rgba(92,225,200,0.6)',borderColor:'#5ce1c8',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Absoluta',color:'#6b6b78'}}}});
+  makeChart('e2ogive','line',labels,[{label:'Fr. Acumulada',data:fc,borderColor:'#5ce1c8',backgroundColor:'rgba(92,225,200,0.08)',tension:0.1,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Acumulada',color:'#6b6b78'},max:1}}});
+  makeChart('e2pie','pie',labels,[{data:fr,backgroundColor:COLORS.slice(0,k),borderColor:'#16161a',borderWidth:2}],{scales:{},plugins:{legend:{labels:{color:'#6b6b78',font:{family:'DM Mono',size:11}}}}});
+})();
+
+// ===================== EJEMPLO 3: Cualitativos =====================
+(function() {
+  const rawCat = ['Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo',
+                  'Rojo','Azul','Verde','Naranja','Morado','Rojo','Azul','Amarillo','Verde','Naranja',
+                  'Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo',
+                  'Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul',
+                  'Verde','Amarillo','Naranja','Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo',
+                  'Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja',
+                  'Morado','Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde',
+                  'Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja','Rojo','Azul',
+                  'Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja','Morado',
+                  'Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo'];
+  const n = rawCat.length;
+  const counts = {};
+  rawCat.forEach(v => counts[v]=(counts[v]||0)+1);
+  const classes = Object.keys(counts).sort();
+  let cumRel = 0;
+  const rows = classes.map(c => {
+    const fa = counts[c];
+    const fr = +(fa/n).toFixed(4);
+    cumRel = +(cumRel+fr).toFixed(4);
+    return [c, fa, fr.toFixed(4), cumRel.toFixed(4)];
+  });
+  buildTable('table3',
+    ['Clase','Frecuencia Absoluta','Frecuencia Relativa','Frecuencia Acumulada'],
+    rows
+  );
+  const labels = classes;
+  const fa = rows.map(r=>+r[1]);
+  const fr = rows.map(r=>+r[2]);
+  const fc = rows.map(r=>+r[3]);
+  makeChart('e3hist','bar',labels,[{label:'Fr. Relativa',data:fr,backgroundColor:'rgba(240,117,96,0.7)',borderColor:'#f07560',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
+  makeChart('e3poly','line',labels,[{label:'Fr. Relativa',data:fr,borderColor:'#f07560',backgroundColor:'rgba(240,117,96,0.1)',tension:0.3,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
+  makeChart('e3bar','bar',labels,[{label:'Fr. Absoluta',data:fa,backgroundColor:'rgba(240,117,96,0.6)',borderColor:'#f07560',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Absoluta',color:'#6b6b78'}}}});
+  makeChart('e3ogive','line',labels,[{label:'Fr. Acumulada',data:fc,borderColor:'#f07560',backgroundColor:'rgba(240,117,96,0.08)',tension:0.1,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Acumulada',color:'#6b6b78'},max:1}}});
+  makeChart('e3pie','pie',labels,[{data:fr,backgroundColor:COLORS.slice(0,classes.length),borderColor:'#16161a',borderWidth:2}],{scales:{},plugins:{legend:{labels:{color:'#6b6b78',font:{family:'DM Mono',size:11}}}}});
+})();
+</script>
+</body>
+</html>
