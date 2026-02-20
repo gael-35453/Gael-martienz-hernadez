@@ -6,259 +6,322 @@
 <title>Distribuciones de Frecuencia</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0d0d0f;
-    --surface: #16161a;
-    --border: #2a2a30;
-    --accent: #e8c547;
-    --accent2: #5ce1c8;
-    --accent3: #f07560;
-    --text: #e8e6e1;
-    --muted: #6b6b78;
+    --bg: #f5f3ef;
+    --white: #ffffff;
+    --surface: #fdfcfa;
+    --border: #ddd8cf;
+    --accent1: #2c5f8a;
+    --accent2: #1a7a5e;
+    --accent3: #8a2c2c;
+    --text: #1e1e1e;
+    --muted: #6b6560;
+    --label: #9e9890;
   }
 
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Mono', monospace;
+    font-family: 'Source Sans 3', sans-serif;
     min-height: 100vh;
     padding: 3rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
   }
 
-  h1 {
-    font-family: 'DM Serif Display', serif;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    letter-spacing: -0.02em;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
+  header {
+    border-bottom: 3px solid var(--text);
+    padding-bottom: 1.5rem;
+    margin-bottom: 3.5rem;
   }
 
-  .subtitle {
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  header p {
     color: var(--muted);
-    font-size: 0.85rem;
-    margin-bottom: 4rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    font-size: 0.95rem;
   }
 
   .example {
-    background: var(--surface);
+    background: var(--white);
     border: 1px solid var(--border);
-    border-radius: 2px;
+    border-radius: 4px;
     margin-bottom: 5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
     overflow: hidden;
   }
 
   .example-header {
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid var(--border);
+    padding: 1.4rem 2rem;
     display: flex;
     align-items: center;
     gap: 1rem;
+    border-bottom: 1px solid var(--border);
   }
 
-  .example-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    padding: 0.3rem 0.8rem;
-    border-radius: 2px;
-  }
+  .example-header-1 { background: var(--accent1); }
+  .example-header-2 { background: var(--accent2); }
+  .example-header-3 { background: var(--accent3); }
 
-  .badge-1 { background: rgba(232,197,71,0.15); color: var(--accent); border: 1px solid rgba(232,197,71,0.3); }
-  .badge-2 { background: rgba(92,225,200,0.15); color: var(--accent2); border: 1px solid rgba(92,225,200,0.3); }
-  .badge-3 { background: rgba(240,117,96,0.15); color: var(--accent3); border: 1px solid rgba(240,117,96,0.3); }
+  .example-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: rgba(255,255,255,0.35);
+    line-height: 1;
+    min-width: 2.5rem;
+  }
 
   .example-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 1.3rem;
-    color: var(--text);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    color: #fff;
   }
 
-  .example-body { padding: 2rem; }
+  .example-body { padding: 2rem 2.5rem; }
+
+  .redaccion {
+    background: var(--surface);
+    border-left: 4px solid var(--border);
+    border-radius: 0 4px 4px 0;
+    padding: 1.2rem 1.5rem;
+    font-size: 0.97rem;
+    line-height: 1.85;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+
+  .redaccion strong { font-weight: 600; }
 
   .section-label {
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 1rem;
+    color: var(--label);
+    margin-bottom: 0.85rem;
     margin-top: 2rem;
+    font-weight: 600;
+    display: block;
   }
-  .section-label:first-child { margin-top: 0; }
+
+  .data-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.1rem 1.4rem;
+    font-size: 0.9rem;
+    line-height: 2;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    word-break: break-word;
+  }
+
+  .data-note {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.4rem;
+    display: block;
+  }
 
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.82rem;
+    font-size: 0.88rem;
+    margin-top: 0.5rem;
   }
+
+  thead tr { background: var(--bg); }
 
   th {
     text-align: left;
     padding: 0.75rem 1rem;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
+    font-weight: 600;
   }
 
   td {
     padding: 0.65rem 1rem;
-    border-bottom: 1px solid rgba(42,42,48,0.6);
+    border-bottom: 1px solid #ede9e3;
     font-variant-numeric: tabular-nums;
   }
 
   tr:last-child td { border-bottom: none; }
-  tr:hover td { background: rgba(255,255,255,0.02); }
+  tbody tr:hover { background: #faf8f5; }
 
   .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.25rem;
+    margin-top: 0.5rem;
   }
 
   .chart-card {
     background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 2px;
+    border-radius: 4px;
     padding: 1.25rem;
   }
 
-  .chart-title {
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
+  .chart-card-title {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.85rem;
   }
 
-  .chart-wrap { position: relative; height: 250px; }
-
-  .accent1-text { color: var(--accent); }
-  .accent2-text { color: var(--accent2); }
-  .accent3-text { color: var(--accent3); }
+  .chart-wrap { position: relative; height: 240px; }
 </style>
 </head>
 <body>
 
-<h1>Distribuciones de Frecuencia</h1>
-<p class="subtitle">100 datos de entrada · 3 ejemplos estadísticos</p>
+<header>
+  <h1>Distribuciones de Frecuencia</h1>
+  <p>Tres ejemplos estadísticos &middot; 100 datos de entrada cada uno</p>
+</header>
 
-<!-- ==================== EJEMPLO 1 ==================== -->
+<!-- ===== EJEMPLO 1 ===== -->
 <div class="example">
-  <div class="example-header">
-    <span class="example-badge badge-1">Ejemplo 01</span>
+  <div class="example-header example-header-1">
+    <span class="example-num">01</span>
     <span class="example-title">Datos Cuantitativos Discretos</span>
   </div>
   <div class="example-body">
-    <p class="section-label">Tabla de frecuencias</p>
+    <div class="redaccion">
+      En una institución educativa se llevó a cabo un estudio sobre el <strong>número de materias reprobadas</strong> por estudiantes de primer ingreso durante su primer semestre. Se encuestaron <strong>100 estudiantes</strong> de manera aleatoria y se registró cuántas asignaturas había reprobado cada uno al finalizar el semestre. Los datos obtenidos son de tipo <strong>cuantitativo discreto</strong>, ya que el número de materias reprobadas es un valor entero no negativo que proviene de un conteo. El análisis de estos datos permite a la institución identificar patrones de rendimiento académico, detectar grupos en situación de riesgo escolar y diseñar estrategias de apoyo estudiantil oportunas y focalizadas.
+    </div>
+
+    <span class="section-label">100 datos de entrada</span>
+    <div class="data-box" id="data1-display"></div>
+    <span class="data-note" id="data1-count"></span>
+
+    <span class="section-label">Tabla de frecuencias</span>
     <table id="table1"></table>
 
-    <p class="section-label">Gráficas</p>
+    <span class="section-label">Gráficas</span>
     <div class="charts-grid">
-      <div class="chart-card"><div class="chart-title">Histograma — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1hist"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Polígono de Frecuencias — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1poly"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Diagrama de Barras — Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e1bar"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Ojiva — Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e1ogive"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Diagrama de Pastel — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1pie"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Histograma &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1hist"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Polígono de Frecuencias &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1poly"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Diagrama de Barras &mdash; Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e1bar"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Ojiva &mdash; Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e1ogive"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Diagrama de Pastel &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e1pie"></canvas></div></div>
     </div>
   </div>
 </div>
 
-<!-- ==================== EJEMPLO 2 ==================== -->
+<!-- ===== EJEMPLO 2 ===== -->
 <div class="example">
-  <div class="example-header">
-    <span class="example-badge badge-2">Ejemplo 02</span>
+  <div class="example-header example-header-2">
+    <span class="example-num">02</span>
     <span class="example-title">Datos Cuantitativos Continuos</span>
   </div>
   <div class="example-body">
-    <p class="section-label">Tabla de frecuencias</p>
+    <div class="redaccion">
+      En una clínica de salud se realizó un estudio para analizar el <strong>tiempo de espera en minutos</strong> que experimentaron los pacientes desde su llegada hasta ser atendidos por un médico. Durante un mes se registraron los tiempos de espera de <strong>100 pacientes</strong> seleccionados de manera aleatoria a lo largo de distintos turnos y días de la semana. Los datos son de tipo <strong>cuantitativo continuo</strong>, dado que el tiempo es una variable que puede tomar cualquier valor real dentro de un intervalo. Este análisis es fundamental en la administración de servicios de salud, pues permite evaluar la eficiencia del sistema de atención, identificar horarios de mayor demanda y proponer mejoras en la distribución del personal médico para reducir los tiempos de espera.
+    </div>
+
+    <span class="section-label">100 datos de entrada</span>
+    <div class="data-box" id="data2-display"></div>
+    <span class="data-note" id="data2-count"></span>
+
+    <span class="section-label">Tabla de frecuencias</span>
     <table id="table2"></table>
 
-    <p class="section-label">Gráficas</p>
+    <span class="section-label">Gráficas</span>
     <div class="charts-grid">
-      <div class="chart-card"><div class="chart-title">Histograma — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2hist"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Polígono de Frecuencias — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2poly"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Diagrama de Barras — Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e2bar"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Ojiva — Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e2ogive"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Diagrama de Pastel — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2pie"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Histograma &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2hist"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Polígono de Frecuencias &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2poly"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Diagrama de Barras &mdash; Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e2bar"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Ojiva &mdash; Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e2ogive"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Diagrama de Pastel &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e2pie"></canvas></div></div>
     </div>
   </div>
 </div>
 
-<!-- ==================== EJEMPLO 3 ==================== -->
+<!-- ===== EJEMPLO 3 ===== -->
 <div class="example">
-  <div class="example-header">
-    <span class="example-badge badge-3">Ejemplo 03</span>
+  <div class="example-header example-header-3">
+    <span class="example-num">03</span>
     <span class="example-title">Datos Cualitativos</span>
   </div>
   <div class="example-body">
-    <p class="section-label">Tabla de frecuencias</p>
+    <div class="redaccion">
+      En una empresa de mercadotecnia se llevó a cabo una encuesta de preferencias para determinar el <strong>medio de comunicación favorito</strong> utilizado por los consumidores para informarse sobre nuevos productos. Se encuestaron <strong>100 personas</strong> de distintas edades y perfiles socioeconómicos de manera aleatoria. Cada participante eligió una sola opción entre las disponibles: Televisión, Internet, Radio, Periódico y Revista. Los datos son de tipo <strong>cualitativo</strong> (también llamados categóricos), ya que representan atributos sin valor numérico intrínseco. El estudio de la distribución de frecuencias permite a la empresa identificar los canales de comunicación más efectivos y orientar de forma más eficiente sus campañas publicitarias y estrategias de marketing digital.
+    </div>
+
+    <span class="section-label">100 datos de entrada</span>
+    <div class="data-box" id="data3-display"></div>
+    <span class="data-note" id="data3-count"></span>
+
+    <span class="section-label">Tabla de frecuencias</span>
     <table id="table3"></table>
 
-    <p class="section-label">Gráficas</p>
+    <span class="section-label">Gráficas</span>
     <div class="charts-grid">
-      <div class="chart-card"><div class="chart-title">Histograma — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3hist"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Polígono de Frecuencias — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3poly"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Diagrama de Barras — Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e3bar"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Ojiva — Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e3ogive"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Diagrama de Pastel — Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3pie"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Histograma &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3hist"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Polígono de Frecuencias &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3poly"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Diagrama de Barras &mdash; Frecuencia Absoluta</div><div class="chart-wrap"><canvas id="e3bar"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Ojiva &mdash; Frecuencia Acumulada</div><div class="chart-wrap"><canvas id="e3ogive"></canvas></div></div>
+      <div class="chart-card"><div class="chart-card-title">Diagrama de Pastel &mdash; Frecuencia Relativa</div><div class="chart-wrap"><canvas id="e3pie"></canvas></div></div>
     </div>
   </div>
 </div>
 
 <script>
-const COLORS = ['#e8c547','#5ce1c8','#f07560','#a78bfa','#60a5fa','#34d399','#fb923c','#f472b6'];
+const PIE_COLORS = ['#2c5f8a','#1a7a5e','#8a2c2c','#b07d2c','#5a2c8a','#2c7a6e','#8a6c2c','#2c4a8a'];
 
-const chartDefaults = {
-  color: '#e8e6e1',
-  borderColor: '#2a2a30',
-  plugins: { legend: { labels: { color: '#6b6b78', font: { family: 'DM Mono', size: 11 } } } },
-  scales: {
-    x: { ticks: { color: '#6b6b78', font: { family: 'DM Mono', size: 10 } }, grid: { color: '#1e1e24' }, border: { color: '#2a2a30' } },
-    y: { ticks: { color: '#6b6b78', font: { family: 'DM Mono', size: 10 } }, grid: { color: '#1e1e24' }, border: { color: '#2a2a30' } }
-  }
-};
-
-function mergeDeep(target, source) {
-  const out = Object.assign({}, target);
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      out[key] = mergeDeep(target[key] || {}, source[key]);
-    } else {
-      out[key] = source[key];
+function baseScales(xlabel, ylabel) {
+  return {
+    x: {
+      title: { display: true, text: xlabel, color: '#6b6560', font: { family: "'Source Sans 3', sans-serif", size: 12 } },
+      ticks: { color: '#9e9890', font: { family: "'Source Sans 3', sans-serif", size: 11 } },
+      grid: { color: '#ede9e3' }, border: { color: '#ddd8cf' }
+    },
+    y: {
+      title: { display: true, text: ylabel, color: '#6b6560', font: { family: "'Source Sans 3', sans-serif", size: 12 } },
+      ticks: { color: '#9e9890', font: { family: "'Source Sans 3', sans-serif", size: 11 } },
+      grid: { color: '#ede9e3' }, border: { color: '#ddd8cf' }
     }
-  }
-  return out;
+  };
 }
 
-function makeChart(id, type, labels, datasets, extraOpts) {
+function mkChart(id, type, labels, datasets, scalesObj, extraPlugins) {
   const ctx = document.getElementById(id).getContext('2d');
-  const opts = mergeDeep(chartDefaults, extraOpts || {});
-  return new Chart(ctx, { type, data: { labels, datasets }, options: { responsive: true, maintainAspectRatio: false, ...opts } });
+  return new Chart(ctx, {
+    type,
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: Object.assign({ legend: { display: false } }, extraPlugins || {}),
+      scales: type === 'pie' ? {} : scalesObj
+    }
+  });
 }
 
 function buildTable(id, headers, rows) {
-  const table = document.getElementById(id);
-  const thead = document.createElement('thead');
-  const hrow = document.createElement('tr');
-  headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; hrow.appendChild(th); });
-  thead.appendChild(hrow);
-  table.appendChild(thead);
-  const tbody = document.createElement('tbody');
+  const t = document.getElementById(id);
+  const thead = t.createTHead();
+  const hr = thead.insertRow();
+  headers.forEach(h => { const th = document.createElement('th'); th.textContent = h; hr.appendChild(th); });
+  const tbody = t.createTBody();
   rows.forEach(r => {
-    const tr = document.createElement('tr');
-    r.forEach(c => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
-    tbody.appendChild(tr);
+    const tr = tbody.insertRow();
+    r.forEach(c => { const td = tr.insertCell(); td.textContent = c; });
   });
-  table.appendChild(tbody);
 }
 
 // ===================== EJEMPLO 1: Discretos =====================
@@ -268,30 +331,35 @@ function buildTable(id, headers, rows) {
                3,4,4,4,5,5,5,6,6,7,7,7,6,5,4,3,2,1,1,2,
                2,3,3,4,5,6,7,8,8,7,6,5,4,3,2,1,1,2,3,4,
                4,5,5,6,6,7,7,8,8,9,9,8,7,6,5,4,3,2,1,1];
+
+  document.getElementById('data1-display').textContent = raw.join(', ');
+  document.getElementById('data1-count').textContent = 'Total: ' + raw.length + ' datos';
+
   const n = raw.length;
   const counts = {};
   raw.forEach(v => counts[v] = (counts[v]||0)+1);
   const classes = Object.keys(counts).map(Number).sort((a,b)=>a-b);
-  let cumAbs = 0, cumRel = 0;
+  let cumRel = 0;
   const rows = classes.map(c => {
     const fa = counts[c];
-    const fr = +(fa/n).toFixed(4);
-    cumAbs += fa; cumRel = +cumRel.toFixed(4); cumRel += fr;
-    return [c, fa, +fr.toFixed(4), +cumRel.toFixed(4)];
+    const fr = fa / n;
+    cumRel = Math.min(cumRel + fr, 1);
+    return [c, fa, fr.toFixed(4), cumRel.toFixed(4)];
   });
-  buildTable('table1',
-    ['Clase','Frecuencia Absoluta','Frecuencia Relativa','Frecuencia Acumulada'],
-    rows.map(r => [r[0], r[1], r[2].toFixed(4), r[3].toFixed(4)])
-  );
-  const labels = classes.map(String);
-  const fa = rows.map(r=>r[1]);
-  const fr = rows.map(r=>r[2]);
-  const fc = rows.map(r=>r[3]);
-  makeChart('e1hist','bar',labels,[{label:'Fr. Relativa',data:fr,backgroundColor:'rgba(232,197,71,0.7)',borderColor:'#e8c547',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
-  makeChart('e1poly','line',labels,[{label:'Fr. Relativa',data:fr,borderColor:'#e8c547',backgroundColor:'rgba(232,197,71,0.1)',tension:0.3,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
-  makeChart('e1bar','bar',labels,[{label:'Fr. Absoluta',data:fa,backgroundColor:'rgba(232,197,71,0.6)',borderColor:'#e8c547',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Absoluta',color:'#6b6b78'}}}});
-  makeChart('e1ogive','line',labels,[{label:'Fr. Acumulada',data:fc,borderColor:'#e8c547',backgroundColor:'rgba(232,197,71,0.08)',tension:0.1,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Clase',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Acumulada',color:'#6b6b78'},max:1}}});
-  makeChart('e1pie','pie',labels,[{data:fr,backgroundColor:COLORS.slice(0,classes.length),borderColor:'#16161a',borderWidth:2}],{scales:{},plugins:{legend:{labels:{color:'#6b6b78',font:{family:'DM Mono',size:11}}}}});
+  buildTable('table1', ['Clase','Frec. Absoluta','Frec. Relativa','Frec. Acumulada'], rows);
+
+  const lbl = classes.map(String);
+  const fa  = rows.map(r => +r[1]);
+  const fr  = rows.map(r => +r[2]);
+  const fc  = rows.map(r => +r[3]);
+  const bg  = 'rgba(44,95,138,0.72)';
+  const bd  = '#2c5f8a';
+
+  mkChart('e1hist',  'bar',  lbl, [{data:fr, backgroundColor:bg, borderColor:bd, borderWidth:1}], baseScales('Clase','Fr. Relativa'));
+  mkChart('e1poly',  'line', lbl, [{data:fr, borderColor:bd, backgroundColor:'rgba(44,95,138,0.09)', tension:0.35, fill:true, pointRadius:4, pointBackgroundColor:bd}], baseScales('Clase','Fr. Relativa'));
+  mkChart('e1bar',   'bar',  lbl, [{data:fa, backgroundColor:bg, borderColor:bd, borderWidth:1}], baseScales('Clase','Fr. Absoluta'));
+  mkChart('e1ogive', 'line', lbl, [{data:fc, borderColor:bd, backgroundColor:'rgba(44,95,138,0.07)', tension:0.1, fill:true, pointRadius:4, pointBackgroundColor:bd}], Object.assign(baseScales('Clase','Fr. Acumulada'), {y:{...baseScales('','').y, max:1, title:{display:true,text:'Fr. Acumulada',color:'#6b6560',font:{size:12}}}}));
+  mkChart('e1pie',   'pie',  lbl, [{data:fr, backgroundColor:PIE_COLORS.slice(0,classes.length), borderColor:'#fff', borderWidth:2}], {}, {legend:{display:true, labels:{color:'#6b6560', font:{size:11}}}});
 })();
 
 // ===================== EJEMPLO 2: Continuos =====================
@@ -306,71 +374,81 @@ function buildTable(id, headers, rows) {
                14.2,17.5,20.8,24.1,27.4,30.7,34.0,37.3,40.6,43.9,
                16.6,19.9,23.2,26.5,29.8,33.1,36.4,39.7,43.0,46.3,
                15.9,19.2,22.5,25.8,29.1,32.4,35.7,39.0,42.3,45.6];
+
+  document.getElementById('data2-display').textContent = raw.join(', ');
+  document.getElementById('data2-count').textContent = 'Total: ' + raw.length + ' datos';
+
   const n = raw.length;
-  const min = Math.min(...raw), max = Math.max(...raw);
+  const minV = Math.min(...raw), maxV = Math.max(...raw);
   const k = 7;
-  const w = +((max - min) / k).toFixed(2);
-  const intervals = Array.from({length:k},(_,i)=>({li: +(min+i*w).toFixed(2), ls: +(min+(i+1)*w).toFixed(2)}));
-  intervals[k-1].ls = max + 0.01;
-  let cumAbs=0, cumRel=0;
+  const w = (maxV - minV) / k;
+  const intervals = Array.from({length:k}, (_,i) => ({ li: minV + i*w, ls: minV + (i+1)*w }));
+  intervals[k-1].ls = maxV + 0.001;
+  let cumRel = 0;
   const rows = intervals.map(iv => {
     const fa = raw.filter(v => v >= iv.li && v < iv.ls).length;
-    const mc = +((iv.li+iv.ls)/2).toFixed(2);
-    const fr = +(fa/n).toFixed(4);
-    cumAbs += fa; cumRel = +(cumRel+fr).toFixed(4);
-    return [iv.li.toFixed(2), +(iv.ls-0.01).toFixed(2), mc, fa, fr.toFixed(4), cumRel.toFixed(4)];
+    const mc = ((iv.li + iv.ls) / 2).toFixed(2);
+    const fr = fa / n;
+    cumRel = Math.min(cumRel + fr, 1);
+    return [iv.li.toFixed(2), (iv.ls - 0.001).toFixed(2), mc, fa, fr.toFixed(4), cumRel.toFixed(4)];
   });
-  buildTable('table2',
-    ['Lím. Inferior','Lím. Superior','Marca de Clase','Fr. Absoluta','Fr. Relativa','Fr. Acumulada'],
-    rows
-  );
-  const labels = rows.map(r=>`[${r[0]}, ${r[1]}]`);
-  const fa = rows.map(r=>+r[3]);
-  const fr = rows.map(r=>+r[4]);
-  const fc = rows.map(r=>+r[5]);
-  makeChart('e2hist','bar',labels,[{label:'Fr. Relativa',data:fr,backgroundColor:'rgba(92,225,200,0.7)',borderColor:'#5ce1c8',borderWidth:1,borderSkipped:false}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
-  makeChart('e2poly','line',labels,[{label:'Fr. Relativa',data:fr,borderColor:'#5ce1c8',backgroundColor:'rgba(92,225,200,0.1)',tension:0.3,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
-  makeChart('e2bar','bar',labels,[{label:'Fr. Absoluta',data:fa,backgroundColor:'rgba(92,225,200,0.6)',borderColor:'#5ce1c8',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Absoluta',color:'#6b6b78'}}}});
-  makeChart('e2ogive','line',labels,[{label:'Fr. Acumulada',data:fc,borderColor:'#5ce1c8',backgroundColor:'rgba(92,225,200,0.08)',tension:0.1,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Intervalo',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Acumulada',color:'#6b6b78'},max:1}}});
-  makeChart('e2pie','pie',labels,[{data:fr,backgroundColor:COLORS.slice(0,k),borderColor:'#16161a',borderWidth:2}],{scales:{},plugins:{legend:{labels:{color:'#6b6b78',font:{family:'DM Mono',size:11}}}}});
+  buildTable('table2', ['Lím. Inferior','Lím. Superior','Marca de Clase','Frec. Absoluta','Frec. Relativa','Frec. Acumulada'], rows);
+
+  const lbl = rows.map(r => '[' + r[0] + ', ' + r[1] + ']');
+  const fa  = rows.map(r => +r[3]);
+  const fr  = rows.map(r => +r[4]);
+  const fc  = rows.map(r => +r[5]);
+  const bg  = 'rgba(26,122,94,0.72)';
+  const bd  = '#1a7a5e';
+
+  mkChart('e2hist',  'bar',  lbl, [{data:fr, backgroundColor:bg, borderColor:bd, borderWidth:1}], baseScales('Intervalo','Fr. Relativa'));
+  mkChart('e2poly',  'line', lbl, [{data:fr, borderColor:bd, backgroundColor:'rgba(26,122,94,0.09)', tension:0.35, fill:true, pointRadius:4, pointBackgroundColor:bd}], baseScales('Intervalo','Fr. Relativa'));
+  mkChart('e2bar',   'bar',  lbl, [{data:fa, backgroundColor:bg, borderColor:bd, borderWidth:1}], baseScales('Intervalo','Fr. Absoluta'));
+  mkChart('e2ogive', 'line', lbl, [{data:fc, borderColor:bd, backgroundColor:'rgba(26,122,94,0.07)', tension:0.1, fill:true, pointRadius:4, pointBackgroundColor:bd}], Object.assign(baseScales('Intervalo','Fr. Acumulada'), {y:{...baseScales('','').y, max:1, title:{display:true,text:'Fr. Acumulada',color:'#6b6560',font:{size:12}}}}));
+  mkChart('e2pie',   'pie',  lbl, [{data:fr, backgroundColor:PIE_COLORS.slice(0,k), borderColor:'#fff', borderWidth:2}], {}, {legend:{display:true, labels:{color:'#6b6560', font:{size:11}}}});
 })();
 
 // ===================== EJEMPLO 3: Cualitativos =====================
 (function() {
-  const rawCat = ['Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo',
-                  'Rojo','Azul','Verde','Naranja','Morado','Rojo','Azul','Amarillo','Verde','Naranja',
-                  'Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo',
-                  'Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul',
-                  'Verde','Amarillo','Naranja','Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo',
-                  'Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja',
-                  'Morado','Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde',
-                  'Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja','Rojo','Azul',
-                  'Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo','Naranja','Morado',
-                  'Rojo','Azul','Verde','Amarillo','Naranja','Morado','Rojo','Azul','Verde','Amarillo'];
-  const n = rawCat.length;
+  const raw = ['Televisión','Internet','Radio','Periódico','Televisión','Internet','Internet','Radio','Televisión','Internet',
+               'Periódico','Revista','Televisión','Internet','Radio','Televisión','Internet','Periódico','Radio','Televisión',
+               'Internet','Televisión','Radio','Internet','Periódico','Televisión','Internet','Radio','Revista','Televisión',
+               'Internet','Periódico','Televisión','Radio','Internet','Televisión','Internet','Radio','Periódico','Televisión',
+               'Revista','Internet','Televisión','Radio','Internet','Televisión','Periódico','Internet','Radio','Televisión',
+               'Internet','Televisión','Radio','Internet','Periódico','Televisión','Internet','Radio','Televisión','Revista',
+               'Internet','Televisión','Radio','Periódico','Internet','Televisión','Internet','Radio','Televisión','Internet',
+               'Periódico','Radio','Televisión','Internet','Revista','Televisión','Radio','Internet','Periódico','Televisión',
+               'Internet','Radio','Televisión','Internet','Periódico','Radio','Televisión','Internet','Revista','Televisión',
+               'Radio','Internet','Televisión','Periódico','Internet','Radio','Televisión','Internet','Periódico','Televisión'];
+
+  document.getElementById('data3-display').textContent = raw.join(', ');
+  document.getElementById('data3-count').textContent = 'Total: ' + raw.length + ' datos';
+
+  const n = raw.length;
   const counts = {};
-  rawCat.forEach(v => counts[v]=(counts[v]||0)+1);
-  const classes = Object.keys(counts).sort();
+  raw.forEach(v => counts[v] = (counts[v]||0)+1);
+  const classes = Object.keys(counts).sort((a,b) => counts[b] - counts[a]);
   let cumRel = 0;
   const rows = classes.map(c => {
     const fa = counts[c];
-    const fr = +(fa/n).toFixed(4);
-    cumRel = +(cumRel+fr).toFixed(4);
+    const fr = fa / n;
+    cumRel = Math.min(cumRel + fr, 1);
     return [c, fa, fr.toFixed(4), cumRel.toFixed(4)];
   });
-  buildTable('table3',
-    ['Clase','Frecuencia Absoluta','Frecuencia Relativa','Frecuencia Acumulada'],
-    rows
-  );
-  const labels = classes;
-  const fa = rows.map(r=>+r[1]);
-  const fr = rows.map(r=>+r[2]);
-  const fc = rows.map(r=>+r[3]);
-  makeChart('e3hist','bar',labels,[{label:'Fr. Relativa',data:fr,backgroundColor:'rgba(240,117,96,0.7)',borderColor:'#f07560',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
-  makeChart('e3poly','line',labels,[{label:'Fr. Relativa',data:fr,borderColor:'#f07560',backgroundColor:'rgba(240,117,96,0.1)',tension:0.3,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Relativa',color:'#6b6b78'}}}});
-  makeChart('e3bar','bar',labels,[{label:'Fr. Absoluta',data:fa,backgroundColor:'rgba(240,117,96,0.6)',borderColor:'#f07560',borderWidth:1}],{plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Absoluta',color:'#6b6b78'}}}});
-  makeChart('e3ogive','line',labels,[{label:'Fr. Acumulada',data:fc,borderColor:'#f07560',backgroundColor:'rgba(240,117,96,0.08)',tension:0.1,fill:true,pointRadius:4}],{scales:{x:{title:{display:true,text:'Categoría',color:'#6b6b78'}},y:{title:{display:true,text:'Fr. Acumulada',color:'#6b6b78'},max:1}}});
-  makeChart('e3pie','pie',labels,[{data:fr,backgroundColor:COLORS.slice(0,classes.length),borderColor:'#16161a',borderWidth:2}],{scales:{},plugins:{legend:{labels:{color:'#6b6b78',font:{family:'DM Mono',size:11}}}}});
+  buildTable('table3', ['Clase','Frec. Absoluta','Frec. Relativa','Frec. Acumulada'], rows);
+
+  const lbl = classes;
+  const fa  = rows.map(r => +r[1]);
+  const fr  = rows.map(r => +r[2]);
+  const fc  = rows.map(r => +r[3]);
+  const bg  = 'rgba(138,44,44,0.72)';
+  const bd  = '#8a2c2c';
+
+  mkChart('e3hist',  'bar',  lbl, [{data:fr, backgroundColor:bg, borderColor:bd, borderWidth:1}], baseScales('Categoría','Fr. Relativa'));
+  mkChart('e3poly',  'line', lbl, [{data:fr, borderColor:bd, backgroundColor:'rgba(138,44,44,0.09)', tension:0.35, fill:true, pointRadius:4, pointBackgroundColor:bd}], baseScales('Categoría','Fr. Relativa'));
+  mkChart('e3bar',   'bar',  lbl, [{data:fa, backgroundColor:bg, borderColor:bd, borderWidth:1}], baseScales('Categoría','Fr. Absoluta'));
+  mkChart('e3ogive', 'line', lbl, [{data:fc, borderColor:bd, backgroundColor:'rgba(138,44,44,0.07)', tension:0.1, fill:true, pointRadius:4, pointBackgroundColor:bd}], Object.assign(baseScales('Categoría','Fr. Acumulada'), {y:{...baseScales('','').y, max:1, title:{display:true,text:'Fr. Acumulada',color:'#6b6560',font:{size:12}}}}));
+  mkChart('e3pie',   'pie',  lbl, [{data:fr, backgroundColor:PIE_COLORS.slice(0,classes.length), borderColor:'#fff', borderWidth:2}], {}, {legend:{display:true, labels:{color:'#6b6560', font:{size:11}}}});
 })();
 </script>
 </body>
